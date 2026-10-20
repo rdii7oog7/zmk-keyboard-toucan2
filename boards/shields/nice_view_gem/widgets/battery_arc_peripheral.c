@@ -53,6 +53,9 @@ static void draw_battery_labels_peripheral(lv_obj_t *canvas, uint8_t level)
     lv_draw_label_dsc_t label_dsc_txt;
     init_label_dsc(&label_dsc_txt, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_CENTER);
     lv_canvas_draw_text(canvas, 81, 45, 56, &label_dsc_txt, buf);
+
+    battery_level_to_voltage_str(level, buf, sizeof(buf));
+    lv_canvas_draw_text(canvas, 81, 60, 56, &label_dsc_txt, buf);
 }
 
 void draw_battery_peripheral_status(lv_obj_t *canvas, const struct status_state *state) {

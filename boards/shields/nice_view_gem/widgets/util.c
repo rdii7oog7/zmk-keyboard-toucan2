@@ -1,6 +1,7 @@
 #include <zephyr/kernel.h>
 #include "util.h"
 #include <ctype.h>
+#include <stdio.h>
 
 
 void to_uppercase(char *str) {
@@ -34,4 +35,20 @@ void init_line_dsc(lv_draw_line_dsc_t *line_dsc, lv_color_t color, uint8_t width
     lv_draw_line_dsc_init(line_dsc);
     line_dsc->color = color;
     line_dsc->width = width;
+}
+
+// ZMK only reports a percentage (the peripheral never sends its voltage), computed in
+// zmk/app/module/drivers/sensor/battery/battery_common.c as:
+// pct = mV * 2 / 15 - 459, clamped to 3450..4200 mV.
+// Invert that to recover an approximate voltage (to within ~7.5 mV).
+void battery_level_to_voltage_str(uint8_t level, char *buf, size_t len) {
+    if (level == 0) {
+        snprintf(buf, len, "--");
+        return;
+    }
+    int mv = (level + 459) * 15 / 2;
+    if (level >= 100) {
+        mv = 4200;
+    }
+    snprintf(buf, len, "%d.%02dV", mv / 1000, (mv % 1000) / 10);
 }

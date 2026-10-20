@@ -31,6 +31,15 @@ static void draw_level_peripheral(lv_obj_t *canvas, const struct status_state *s
     }
 }
 
+static void draw_voltage_peripheral(lv_obj_t *canvas, const struct status_state *state) {
+    char buf[8];
+    battery_level_to_voltage_str(state->battery_p, buf, sizeof(buf));
+    lv_draw_label_dsc_t label_dsc;
+    init_label_dsc(&label_dsc, LVGL_FOREGROUND, &quinquefive_8, LV_TEXT_ALIGN_CENTER);
+    lv_canvas_draw_text(canvas, 80, 29, 60, &label_dsc, buf);
+}
+
 void draw_battery_peripheral_status(lv_obj_t *canvas, const struct status_state *state) {
     draw_level_peripheral(canvas, state);
+    draw_voltage_peripheral(canvas, state);
 }
