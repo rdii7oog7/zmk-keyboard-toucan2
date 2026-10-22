@@ -4,10 +4,15 @@
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/pointing.h>
 
-#define BASE 0
-#define NAV  1
-#define SYM  2
-#define ADJ  3
+// Layer order matters: higher index wins. WIN/WNAV must sit below NAV/SYM/ADJ.
+// MOUSE (6) and NAV/SYM (2/4) indices are also referenced in boards/shields/toucan/toucan.dtsi
+#define BASE  0
+#define WIN   1
+#define NAV   2
+#define WNAV  3
+#define SYM   4
+#define ADJ   5
+#define MOUSE 6
 
 // Key positions for chordal hold (see toucan.dtsi)
 #define KEYS_L 0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29
@@ -18,8 +23,12 @@
     conditional_layers {
         compatible = "zmk,conditional-layers";
         tri_layer {
-            if-layers = <1 2>;
-            then-layer = <3>;
+            if-layers = <NAV SYM>;
+            then-layer = <ADJ>;
+        };
+        win_nav {
+            if-layers = <WIN NAV>;
+            then-layer = <WNAV>;
         };
     };
 
@@ -63,6 +72,20 @@
                 , <&macro_release &kp LGUI>
                 ;
         };
+
+        // Windows app switcher: hold Alt, tap Tab, keep Alt held until key release
+        alt_tab: alt_tab {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <10>;
+            tap-ms = <10>;
+            bindings
+                = <&macro_press &kp LALT>
+                , <&macro_tap &kp TAB>
+                , <&macro_pause_for_release>
+                , <&macro_release &kp LALT>
+                ;
+        };
     };
 
     keymap {
@@ -74,7 +97,18 @@
                 &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
                 &kp LCTRL &hml LCTRL A &hml LALT S &hml LGUI D &hml LSHFT F &kp G   &kp H &hmr RSHFT J &hmr RGUI K &hmr RALT L &hmr RCTRL SEMI &kp SQT
                 &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
-                                &app_swch &kp SPACE &mo 1   &mo 2 &kp RET   &kp RALT
+                                &app_swch &kp SPACE &mo NAV   &mo SYM &kp RET   &kp RALT
+            >;
+        };
+
+        // Windows base: latched on/off with ADJ + Z position. Home row mods GACS.
+        win {
+            display-name = "WIN";
+            bindings = <
+                &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
+                &kp LCTRL &hml LGUI A &hml LALT S &hml LCTRL D &hml LSHFT F &kp G   &kp H &hmr RSHFT J &hmr RCTRL K &hmr RALT L &hmr RGUI SEMI &kp SQT
+                &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp ESC
+                                &alt_tab &kp SPACE &mo NAV   &mo SYM &kp RET   &kp RALT
             >;
         };
 
@@ -85,6 +119,17 @@
                 &kp LCTRL   &kp LCTRL       &kp LALT     &kp LGUI     &kp LSHFT    &trans         &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
                 &kp LSHFT   &studio_unlock  &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
                                                 &kp LGUI     &trans       &trans           &trans     &trans   &kp RALT
+            >;
+        };
+
+        // Windows nav overrides: active automatically when WIN + NAV (conditional layer). GACS mods.
+        wnav {
+            display-name = "WNAV";
+            bindings = <
+                &trans &trans    &trans   &trans    &trans    &trans   &trans &trans &trans &trans &trans &trans
+                &trans &kp LGUI  &kp LALT &kp LCTRL &kp LSHFT &trans   &trans &trans &trans &trans &trans &trans
+                &trans &trans    &trans   &trans    &trans    &trans   &trans &trans &trans &trans &trans &trans
+                                          &trans    &trans    &trans   &trans &trans &trans
             >;
         };
 
@@ -103,7 +148,7 @@
             bindings = <
                 &kp TAB   &trans &kp F7 &kp F8 &kp F9 &kp F12   &kp C_VOL_DN &kp C_MUTE  &kp C_VOL_UP &kp C_PP &kp C_NEXT &kp BSPC
                 &kp LCTRL &trans &kp F4 &kp F5 &kp F6 &kp F11   &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans
-                &kp LSHFT &trans &kp F1 &kp F2 &kp F3 &kp F10   &trans       &trans      &trans       &trans &trans &bt BT_CLR
+                &kp LSHFT &tog WIN &kp F1 &kp F2 &kp F3 &kp F10   &trans       &trans      &trans       &trans &trans &bt BT_CLR
                                    &kp LGUI &kp SPACE &mo NAV   &mo SYM   &kp RET &kp RALT
             >;
         };
