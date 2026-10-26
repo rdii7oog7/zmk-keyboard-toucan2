@@ -116,7 +116,7 @@
             display-name = "NAV";
             bindings = <
                 &kp TAB     &kp N1          &kp N2       &kp N3       &kp N4       &kp N5         &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
-                &kp LCTRL   &kp LCTRL       &kp LALT     &kp LGUI     &kp LSHFT    &trans         &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
+                &kp LCTRL   &kp LCTRL       &kp LALT     &kp LGUI     &kp LSHFT    &kp LG(LEFT)   &kp LG(RIGHT) &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans
                 &kp LSHFT   &studio_unlock  &trans       &trans       &trans       &trans         &trans   &trans   &trans &trans    &trans &trans
                                                 &kp LGUI     &trans       &trans           &trans     &trans   &kp RALT
             >;
@@ -127,7 +127,7 @@
             display-name = "WNAV";
             bindings = <
                 &trans &trans    &trans   &trans    &trans    &trans   &trans &trans &trans &trans &trans &trans
-                &trans &kp LGUI  &kp LALT &kp LCTRL &kp LSHFT &trans   &trans &trans &trans &trans &trans &trans
+                &trans &kp LGUI  &kp LALT &kp LCTRL &kp LSHFT &kp HOME &kp END &trans &trans &trans &trans &trans
                 &trans &trans    &trans   &trans    &trans    &trans   &trans &trans &trans &trans &trans &trans
                                           &trans    &trans    &trans   &trans &trans &trans
             >;
